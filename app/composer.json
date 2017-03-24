@@ -1,0 +1,6 @@
+{
+    "require": {
+        "cakephp/debug_kit": "2.2.*",
+        "twbs/bootstrap": "^3.3"
+    }
+}

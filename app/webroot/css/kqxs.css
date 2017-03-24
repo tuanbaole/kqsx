@@ -1,0 +1,12 @@
+div.fixed {
+    position: fixed;
+    top: 50px;
+    right: 0;
+    width: 350px;
+    z-index: 10;
+}
+
+.hidden {
+	display: none;
+	opacity: 1;
+}
