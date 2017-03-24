@@ -10,3 +10,7 @@ div.fixed {
 	display: none;
 	opacity: 1;
 }
+
+.cursor {
+	cursor : pointer;
+}

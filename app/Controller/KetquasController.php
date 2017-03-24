@@ -18,8 +18,6 @@ class KetquasController extends AppController
 
     public function index() 
     {
-        // $exec = shell_exec('C:\xampp\mysql\bin\mysqldump.exe --user=root --password=itcode ketqua');
-        // pr($exec);
         $this->loadModel('Loto');
         $today = date("Y-m-d");
         $lastday = date("Y-m-d",strtotime('-1 day'));
@@ -65,9 +63,18 @@ class KetquasController extends AppController
             }
         }
         $check_string = array('dacbiet','nhat');
-        if (isset($ketqua['Ketqua']['id'])) $id = $ketqua['Ketqua']['id'];
+        $id = $ketqua['Ketqua']['id'];
         unset($ketqua['Ketqua']['id']);
-        $this->set(compact('ketqua','date','id','check_string','lotos','loto_daus','loto_dits'));
+
+        $this->loadModel('Giaithuong');
+        $giai_thuongs = $this->Giaithuong->find('all',array(
+            'conditions' => array(
+                'Giaithuong.ketqua_id' => $id,
+                'Giaithuong.bang' => 1,
+                'Giaithuong.date' => $date
+                )
+            ) );
+        $this->set(compact('ketqua','date','id','check_string','lotos','loto_daus','loto_dits','giai_thuongs'));
     }
 
 	public function update_today() 
@@ -493,9 +500,34 @@ class KetquasController extends AppController
             $this->autoRender = false;
             $data = $this->request->data;
             $this->loadModel('Loto');
-            // $this->Loto->find
-            pr($data);
+            $this->loadModel('Giaithuong');
+            $so_nhay = $this->Loto->find('count',array(
+                'conditions' => array(
+                    'Loto.date' => $data['date'],
+                    'Loto.loto' => $data['loto'] 
+                    )
+                ) );
+            $giai_thuong['loto'] = $data['loto'];
+            $giai_thuong['diem'] = $data['diem'];
+            $giai_thuong['so_nhay'] = $so_nhay;
+            $giai_thuong['tong_diem_trung'] = $so_nhay * $data['diem'];
+            $giai_thuong['date'] = $data['date'];
+            $giai_thuong['tien_danh'] = $data['diem'] * $data['gia_diem'];
+            $giai_thuong['tien_trung'] = $data['diem'] * $data['gia_trung'] * $so_nhay;
+            $giai_thuong['trang_thai'] = 1;
+            $giai_thuong['gia_diem'] = $data['gia_diem'];
+            $giai_thuong['gia_trung'] = $data['gia_trung'];
+            $giai_thuong['ketqua_id'] = $data['ketqua_id'];
+            $giai_thuong['bang'] = 1;
+            $giai_thuong['so_du'] = $giai_thuong['tien_danh'] - $giai_thuong['tien_trung'];
+            $this->Giaithuong->create();
+            $ht_giai_thuong = $this->Giaithuong->save($giai_thuong);
+            pr($ht_giai_thuong);
         }
+    }
+
+    public function delete_giaithuong(){
+
     }
 
 }

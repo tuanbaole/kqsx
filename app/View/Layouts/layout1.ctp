@@ -40,7 +40,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->fetch('script');
 	?>
 	<link href="/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-	<script src="/bootstrap-3.3.7-dist/jquery/dist/jquery.min.js"></script>
+	<script src="/bootstrap-3.3.7-dist/jquery-1.12.4/dist/jquery.min.js"></script>
 	<script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 </head>
 <body>
