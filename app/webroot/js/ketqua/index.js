@@ -59,7 +59,7 @@ jQuery(document).ready(function(){
 	                type: "POST",
 	                data: data,
 	                beforeSend: function () {
-	                },
+	                },	
 	                success: function (result) {
 	                	jQuery('#de').val('');
 						jQuery('#tien_de').val('');
