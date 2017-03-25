@@ -32,8 +32,6 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 	public $components = array('DebugKit.Toolbar','Session');
-	
-	var $layout = 'layout1';
 
 	public $helpers = array(
         		'Html'=> array('className'=>'MyHtml')

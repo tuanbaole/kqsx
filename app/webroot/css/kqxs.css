@@ -1,6 +1,6 @@
 div.fixed {
     position: fixed;
-    top: 50px;
+    top : 0px;
     right: 0;
     width: 350px;
     z-index: 10;
