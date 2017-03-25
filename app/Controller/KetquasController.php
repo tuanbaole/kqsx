@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
  */
 class KetquasController extends AppController 
 {
-
+    var $layout = 'layout1';
 /**
  * Components
  *
@@ -175,59 +175,59 @@ class KetquasController extends AppController
 						'Ketqua.dacbiet IS NOT NULL'
 						)
 					));
-			if (empty($check_up)) 
-            {
-				if (!$this->Ketqua->exists($kt_kq['Ketqua']['id'])) 
-                {
-					throw new NotFoundException(__('Invalid order'));
-				}
-				$this->Ketqua->id = $kt_kq['Ketqua']['id'];
-				$ketqua = $this->Ketqua->save($kq);
-			} 
-            else 
-            {
-				$ketqua = true;
-			}
-            $lotos = array();
-            $i = 0;
-            /* nhat */
-            $lotos += $this->get_loto_string($kq['nhat'],$kt_kq['Ketqua']['id'],0,1,$kq['date'],$i);
-            $i++;
-            /* nhat */
-            /* nhi */
-            $nhi = $this->get_loto($kq['nhi'],$kt_kq['Ketqua']['id'],0,2,$kq['date'],$i);
-            $lotos += $nhi['loto'];
-            $i = $nhi['i'];
-            /* nhi */
-            /* ba */
-            $ba = $this->get_loto($kq['ba'],$kt_kq['Ketqua']['id'],0,3,$kq['date'],$i);
-            $lotos += $ba['loto'];
-            $i = $ba['i'];
-            /* ba */
-            /* tu */
-            $tu = $this->get_loto($kq['tu'],$kt_kq['Ketqua']['id'],0,4,$kq['date'],$i);
-            $lotos += $tu['loto'];
-            $i = $tu['i'];
-            /* tu */
-            /* nam */
-            $nam = $this->get_loto($kq['nam'],$kt_kq['Ketqua']['id'],0,5,$kq['date'],$i);
-            $lotos += $nam['loto'];
-            $i = $nam['i'];
-            /* nam */
-            /* sau */
-            $sau = $this->get_loto($kq['sau'],$kt_kq['Ketqua']['id'],0,6,$kq['date'],$i);
-            $lotos += $sau['loto'];
-            $i = $sau['i'];
-            /* sau */
-            /* bay */
-            $bay = $this->get_loto($kq['bay'],$kt_kq['Ketqua']['id'],0,7,$kq['date'],$i);
-            $lotos += $bay['loto'];
-            $i = $bay['i'];
-            /* bay */
-            $lotos += $this->get_loto_string($kq['dacbiet'],$kt_kq['Ketqua']['id'],1,8,$kq['date'],$i);
-            $delete = $this->Loto->deleteAll(array('Loto.date' => $kq['date']), false);
-            $return_loto = $this->Loto->saveAll($lotos);
 		}
+        if (empty($check_up)) 
+        {
+            if (!$this->Ketqua->exists($kt_kq['Ketqua']['id'])) 
+            {
+                throw new NotFoundException(__('Invalid order'));
+            }
+            $this->Ketqua->id = $kt_kq['Ketqua']['id'];
+            $ketqua = $this->Ketqua->save($kq);
+        } 
+        else 
+        {
+            $ketqua = true;
+        }
+        $lotos = array();
+        $i = 0;
+        /* nhat */
+        $lotos += $this->get_loto_string($kq['nhat'],$kt_kq['Ketqua']['id'],0,1,$kq['date'],$i);
+        $i++;
+        /* nhat */
+        /* nhi */
+        $nhi = $this->get_loto($kq['nhi'],$kt_kq['Ketqua']['id'],0,2,$kq['date'],$i);
+        $lotos += $nhi['loto'];
+        $i = $nhi['i'];
+        /* nhi */
+        /* ba */
+        $ba = $this->get_loto($kq['ba'],$kt_kq['Ketqua']['id'],0,3,$kq['date'],$i);
+        $lotos += $ba['loto'];
+        $i = $ba['i'];
+        /* ba */
+        /* tu */
+        $tu = $this->get_loto($kq['tu'],$kt_kq['Ketqua']['id'],0,4,$kq['date'],$i);
+        $lotos += $tu['loto'];
+        $i = $tu['i'];
+        /* tu */
+        /* nam */
+        $nam = $this->get_loto($kq['nam'],$kt_kq['Ketqua']['id'],0,5,$kq['date'],$i);
+        $lotos += $nam['loto'];
+        $i = $nam['i'];
+        /* nam */
+        /* sau */
+        $sau = $this->get_loto($kq['sau'],$kt_kq['Ketqua']['id'],0,6,$kq['date'],$i);
+        $lotos += $sau['loto'];
+        $i = $sau['i'];
+        /* sau */
+        /* bay */
+        $bay = $this->get_loto($kq['bay'],$kt_kq['Ketqua']['id'],0,7,$kq['date'],$i);
+        $lotos += $bay['loto'];
+        $i = $bay['i'];
+        /* bay */
+        $lotos += $this->get_loto_string($kq['dacbiet'],$kt_kq['Ketqua']['id'],1,8,$kq['date'],$i);
+        $delete = $this->Loto->deleteAll(array('Loto.date' => $kq['date']), false);
+        $return_loto = $this->Loto->saveAll($lotos);
         if ($ketqua && $return_loto) 
         {
             return true;
@@ -493,11 +493,12 @@ class KetquasController extends AppController
         );
     }
 
-    public function nhapvao()
+    public function nhapvao_lo()
     {
         if($this->request->is('ajax'))
         {
             $this->autoRender = false;
+            $this->layout = false;
             $data = $this->request->data;
             $this->loadModel('Loto');
             $this->loadModel('Giaithuong');
@@ -522,12 +523,20 @@ class KetquasController extends AppController
             $giai_thuong['so_du'] = $giai_thuong['tien_danh'] - $giai_thuong['tien_trung'];
             $this->Giaithuong->create();
             $ht_giai_thuong = $this->Giaithuong->save($giai_thuong);
-            pr($ht_giai_thuong);
+            
+            $giai_thuongs = $this->Giaithuong->find('all',array(
+                'conditions' => array(
+                    'Giaithuong.ketqua_id' => $data['ketqua_id'],
+                    'Giaithuong.bang' => 1,
+                    'Giaithuong.date' => $data['date']
+                    )
+                ) );
+            $this->set('date',$data['date']);
+            $this->set(compact('giai_thuongs'));
+            $this->set('ket_qua_id', $data['ketqua_id']); // chú dòng này nếu có lỗi
+            $this->render('/Elements/giaithuong_loto');
+
         }
-    }
-
-    public function delete_giaithuong(){
-
     }
 
 }

@@ -142,87 +142,35 @@
 
 	<div class="col-md-9"><!-- col-md-8.1 -->
 		<div class="row"><!-- row-3 -->
-			<div class="col-md-12"><!-- end col-md-12.4 -->
+
+			<div class="col-md-6"><!-- col-md-6.1 -->
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Loto'); ?></span>
 				    <input id="loto" type="number" class="form-control" name="loto" placeholder="Loto" max="99" min="0">
 				</div>
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Diem'); ?></span>
-				    <input id="diem" type="number" class="form-control" name="number" placeholder="Diem" step="0.1">
+				    <input id="diem" type="number" class="form-control" name="diem" placeholder="Diem" step="0.1">
 				</div>
-			</div><!-- end col-md-12.4 -->
-			<div class="col-md-6" id="bang-ket-qua"><!-- col-md-12.5 -->
-				<table class="table table-condensed">
-					<thead>
-						<tr>
-							<th class="text-center"><?php echo __('#'); ?></th>
-							<th class="text-center"><?php echo __('Lô'); ?></th>
-							<th class="text-center"><?php echo __('Điểm'); ?></th>
-							<th class="text-center"><?php echo __('Nháy'); ?></th>
-							<th class="text-center"><?php echo __('Trúng'); ?></th>
-							<th class="text-center"><?php echo __('Tiền Đánh'); ?></th>
-							<th class="text-center"><?php echo __('Tiền Trúng'); ?></th>
-							<th class="text-center"><?php echo __('Số Dư'); ?></th>
-							<th class="text-center"><?php echo __('Xóa') ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php $i=1;$diem=0;$tong_diem_trung=0;$tien_danh=0;$tien_trung=0;$so_du=0; ?>
-						<?php foreach ($giai_thuongs as $key_giai_thuong => $value_giai_thuong): ?>
-							<tr class="<?php echo ($value_giai_thuong['Giaithuong']['so_nhay'] == 0)? 'info' : 'danger'; ?>" >
-								<td class="text-center"><?php echo $i;$i++; ?></td>
-								<td class="text-center"><?php echo  $this->MyHtml->conver_number($value_giai_thuong['Giaithuong']['loto']); ?></td>
-								<td class="text-center">
-									<?php 
-										$diem += $value_giai_thuong['Giaithuong']['diem']; 
-										echo $value_giai_thuong['Giaithuong']['diem']; 
-									?>
-								</td>
-								<td class="text-center"><?php echo $value_giai_thuong['Giaithuong']['so_nhay']; ?></td>
-								<td class="text-center">
-									<?php 
-										$tong_diem_trung += $value_giai_thuong['Giaithuong']['tong_diem_trung']; 
-										echo $value_giai_thuong['Giaithuong']['tong_diem_trung']; 
-									?>
-								</td>
-								<td class="text-center">
-									<?php 
-										$tien_danh += $value_giai_thuong['Giaithuong']['tien_danh'];
-										echo number_format($value_giai_thuong['Giaithuong']['tien_danh']); 
-									?>
-								</td>
-								<td class="text-center">
-									<?php 
-										$tien_trung += $value_giai_thuong['Giaithuong']['tien_trung'];
-										echo number_format($value_giai_thuong['Giaithuong']['tien_trung']); 
-									?>
-								</td>
-								<td class="text-center">
-									<?php 
-										$so_du += $value_giai_thuong['Giaithuong']['so_du'];
-										echo number_format($value_giai_thuong['Giaithuong']['so_du']); 
-									?>
-								</td>
-								<td class="text-center">
-									<i class="glyphicon glyphicon-remove text-danger cursor remove-giai-thuong" gt-id="<?php echo $value_giai_thuong['Giaithuong']['loto']; ?>"></i>
-								</td>
-							</tr>
-						<?php endforeach ?>
-						<tr class="">
-							<td></td>
-							<td></td>
-							<td class="text-center text-danger"><?php echo $diem; ?></td>
-							<td></td>
-							<td class="text-center text-danger"><?php echo number_format($tong_diem_trung); ?></td>
-							<td class="text-center text-danger"><?php echo number_format($tien_danh); ?></td>
-							<td class="text-center text-danger"><?php echo number_format($tien_trung); ?></td>
-							<td class="text-center text-danger bg-danger"><?php echo number_format($so_du); ?></td>
-							<td></td>
-						</tr>
-					</tbody>
-				</table>
-			</div><!-- end col-md-12.5 -->
+				<div id="giaithuong-loto">
+					<?php echo $this->element('giaithuong_loto',array('giai_thuongs' => $giai_thuongs,'date'=>$date,'ket_qua_id' => $id)); ?>
+				</div>
+			</div><!-- end col-md-6.1 -->
+
+			<div class="col-md-6"><!-- col-md-6.2 -->
+				<div class="input-group">
+				    <span class="input-group-addon"><?php echo __('Đề'); ?></span>
+				    <input id="de" type="number" class="form-control" name="de" placeholder="Đề" max="99" min="0">
+				</div>
+				<div class="input-group">
+				    <span class="input-group-addon"><?php echo __('Tiền'); ?></span>
+				    <input id="tien_de" type="number" class="form-control" name="tien_de" placeholder="Tiền" step="0.1">
+				</div>
+				<div id="giaithuong-de">
+					<?php //echo $this->element('giaithuong_de',array('giai_thuongs' => $giai_thuongs,'date'=>$date,'ket_qua_id' => $id)); ?>
+				</div>
+			</div><!-- end col-md-6.2 -->
+
 		</div><!-- end row-3 -->
 	</div><!-- end col-md-8.1 -->
 

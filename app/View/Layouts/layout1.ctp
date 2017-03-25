@@ -42,6 +42,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<link href="/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="/bootstrap-3.3.7-dist/jquery-1.12.4/dist/jquery.min.js"></script>
 	<script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript" src="/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+	<link href="/bootstrap-datepicker/css/datepicker.css" rel="stylesheet">
+
+	<script src="/js/global.js"></script>
 </head>
 <body>
 	<!-- menu -->
@@ -73,9 +78,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				    )
 				));
 	      	?>
-	      	<div class="input-group">
+	      	<div class="input-group" >
 		      	<?php 
-		      		echo $this->Form->input( 'date',array('class' => 'form-control') );
+		      		echo $this->Form->input( 'date',array('class' => 'form-control',"id" => "datepicker","value" => date('Y-m-d')) );
 		      	?>
 		      	<div class="input-group-btn">
 			      <span class="btn btn-default">
