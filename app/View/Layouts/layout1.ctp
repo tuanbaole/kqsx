@@ -31,8 +31,6 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			'anh-upload/index.jpg',
     		array('type' => 'icon')
     	);
-
-		echo $this->Html->css('cake.generic');
 		echo $this->Html->css('kqxs.css');
 
 		echo $this->fetch('meta');
@@ -53,7 +51,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<nav class="navbar navbar-default">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
-	      <span class="navbar-brand" href="#">Tool</span>
+	      <span class="navbar-brand" href="#"><?php echo __('Ứng Dụng') ?></span>
 	    </div>
 	    <ul class="nav navbar-nav">
 	      <li class="active">
@@ -68,24 +66,22 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	      <li>
 	      	<?php 
 	      		echo $this->Form->create('session', array(
-				    'url' => array('controller' => 'recipes', 'action' => 'add'),
-				    'id' => 'RecipesAdd',
+				    'url' => array('controller' => 'ketquas', 'action' => 'session'),
+				    'id' => 'session',
 				    'class' => 'navbar-form navbar-left',
-				    'style' => 'margin:0px;',
 				    'inputDefaults' => array(
-				        'label' => false,
-				        'div' => false
+				        'label' => false
 				    )
 				));
 	      	?>
 	      	<div class="input-group" >
 		      	<?php 
-		      		echo $this->Form->input( 'date',array('class' => 'form-control',"id" => "datepicker","value" => date('Y-m-d')) );
+		      		echo $this->Form->input( 'date',array('class' => 'form-control',"id" => "datepicker","value" => $this->Session->read('Session.date') ) );
 		      	?>
 		      	<div class="input-group-btn">
-			      <span class="btn btn-default">
+			      <button class="btn btn-default">
 			        <i class="glyphicon glyphicon-search"></i>
-			      </span>
+			      </button>
 			    </div>
 		    </div>
 		    <?php echo $this->Form->end(array('class' => 'hidden','div' => false)); ?>

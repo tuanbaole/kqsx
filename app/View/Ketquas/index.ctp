@@ -65,16 +65,16 @@
 						<table class="table table-bordered">
 							<thead>
 								<tr>
-									<th class="text-center"><?php echo __('Đầu'); ?></th>
-									<th class="text-center"><?php echo __('Loto'); ?></th>
+									<th class="text-center" style="padding:3px;"><?php echo __('Đầu'); ?></th>
+									<th class="text-center" style="padding:3px;"><?php echo __('Loto'); ?></th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php if (!empty($loto_daus)): ?>
 									<?php foreach ($loto_daus as $key_loto_dau => $value_loto_dau): ?>
 										<tr>
-											<td class="text-center"><?php echo $key_loto_dau; ?></td>
-											<td class="text-center">
+											<td class="text-center" style="padding:3px;"><?php echo $key_loto_dau; ?></td>
+											<td class="text-center" style="padding:3px;">
 												<?php $string_dau = ''; ?>
 												<?php foreach ($value_loto_dau as $key_value_loto_dau => $value_value_loto_dau): ?>
 													<?php 
@@ -101,16 +101,16 @@
 						<table class="table table-bordered">
 							<thead>
 								<tr>
-									<th class="text-center"><?php echo __('Đuôi'); ?></th>
-									<th class="text-center"><?php echo __('Loto'); ?></th>
+									<th class="text-center" style="padding:3px;"><?php echo __('Đuôi'); ?></th>
+									<th class="text-center" style="padding:3px;"><?php echo __('Loto'); ?></th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php if (!empty($loto_dits)): ?>
 									<?php foreach ($loto_dits as $key_loto_dit => $value_loto_dit): ?>
 										<tr>
-											<td class="text-center"><?php echo $key_loto_dit; ?></td>
-											<td class="text-center">
+											<td class="text-center" style="padding:3px;"><?php echo $key_loto_dit; ?></td>
+											<td class="text-center" style="padding:3px;">
 												<?php $string_dit = ''; ?>
 												<?php foreach ($value_loto_dit as $key_value_loto_dit => $value_value_loto_dit): ?>
 													<?php 
@@ -142,7 +142,50 @@
 
 	<div class="col-md-9"><!-- col-md-8.1 -->
 		<div class="row"><!-- row-3 -->
-
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="pagination" style="margin:0px 0px 5px 0px;">
+							<li>
+								<span style="line-height: 2.2;"><?php echo __('Lô'); ?></span>
+							</li>
+							<li>
+							  	<span style="line-height: 2.2;" class="col-xs-2">
+							  		<input class="form-control input-sm currentcy-input" type="text" name="" value="<?php echo number_format(21700); ?>" id="gia-diem" don-vi="<?php echo 21700; ?>"  step="any" >
+								  	
+								</span>
+							  </li>
+							  <li>
+								<span style="line-height: 2.2;"><?php echo __('Trúng') ?></span>
+							</li>
+							<li>
+							  	<span style="line-height: 2.2;" class="col-xs-2">
+								  	<input class="form-control input-sm currentcy-input" type="text" name="" value="<?php echo number_format(80000); ?>"  id="gia-trung" don-vi="<?php echo 80000; ?>" >
+								</span>
+							  </li>
+							  <li>
+								<span style="line-height: 2.2;"><?php echo __('Đề') ?></span>
+							</li>
+							<li>
+							  	<span style="line-height: 2.2;" class="col-xs-2">
+							  		<input class="form-control input-sm" type="text" name="" value="<?php echo 80; ?>" id="gia-trung-de">
+								</span>
+							  </li>
+						</ul>
+					</div>
+					<div class="col-md-12">
+						<ul class="pagination pagination-sm" style="margin:0px 0px 5px 0px;" id="pagination-bang" val="<?php echo $bang; ?>">
+						  <li><a href="#"><?php echo __('Tất Cả'); ?></a></li>
+						  <li id="them-bang"><a href="#"><i class="glyphicon glyphicon-plus"></i></a></li>
+						  <?php for ($i=1; $i <= $bang; $i++) : ?> 
+						  	<li class="don-giaithuong <?php echo ($i==$this->Session->read('Session.bang') )?'active':''; ?>" val="<?php echo $i; ?>">
+						  		<?php echo $this->Html->link($i, array('controller'=>'ketquas','action'=>'session_bang',$i), array('escape'=>false)); ?>
+						  	</li>
+						  <?php endfor ?>
+						</ul>
+					</div>
+				</div>
+			</div>
 			<div class="col-md-6"><!-- col-md-6.1 -->
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Loto'); ?></span>
@@ -176,7 +219,5 @@
 
 </div><!-- end row.1 -->
 <div class="hidden" id="get-date" date="<?php echo $date; ?>"></div>
-<div class="hidden" id="gia-diem" don-vi="<?php echo 21700; ?>"></div>
-<div class="hidden" id="gia-trung" don-vi="<?php echo 80000; ?>"></div>
 <div class="hidden" id="ket-qua-id" don-vi="<?php echo $id; ?>"></div>
 <script type="text/javascript" src="/js/ketqua/index.js"></script>

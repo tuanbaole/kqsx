@@ -36,4 +36,9 @@ class AppController extends Controller {
 	public $helpers = array(
         		'Html'=> array('className'=>'MyHtml')
     		);
+
+	public function beforeFilter() {
+		if (!$this->Session->check('Session.date')) $this->Session->write('Session.date',date('Y-m-d'));
+		if (!$this->Session->check('Session.bang')) $this->Session->write('Session.bang',1);
+	}
 }

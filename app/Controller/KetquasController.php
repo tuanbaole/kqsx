@@ -19,62 +19,66 @@ class KetquasController extends AppController
     public function index() 
     {
         $this->loadModel('Loto');
-        $today = date("Y-m-d");
-        $lastday = date("Y-m-d",strtotime('-1 day'));
+        $today = date("Y-m-d",strtotime($this->Session->read('Session.date') ) );
+        // $lastday = date("Y-m-d",strtotime( $today.' -1 day'));
         $ketqua = $this->Ketqua->find('first',array(
             'conditions' => array('Ketqua.date' => $today),
-            'fields' => array('Ketqua.id','Ketqua.dacbiet','Ketqua.nhat','Ketqua.nhi','Ketqua.ba','Ketqua.tu','Ketqua.nam','Ketqua.sau','Ketqua.bay')
+            'fields' => array('Ketqua.id','Ketqua.dacbiet','Ketqua.nhat','Ketqua.nhi','Ketqua.ba','Ketqua.tu','Ketqua.nam','Ketqua.sau','Ketqua.bay'),
+            'order' => array('Ketqua.date DESC')
         ));
-        if (empty($ketqua)) {
-            $ketqua = $this->Ketqua->find('first',array(
-                'conditions' => array('Ketqua.date' => $lastday),
-                'fields' => array('Ketqua.id','Ketqua.dacbiet','Ketqua.nhat','Ketqua.nhi','Ketqua.ba','Ketqua.tu','Ketqua.nam','Ketqua.sau','Ketqua.bay')
-
-            ));
-            $date = $lastday;
-        } else {
-            $date = $today;
-        }
-
-        $lotos = $this->Loto->find('all',array(
+        if (!empty($ketqua)) {
+            $lotos = $this->Loto->find('all',array(
                 'conditions' => array(
-                    'Loto.date' => $date
+                    'Loto.date' => $today
                 ),
                 'order' => array('Loto.loto ASC'),
                 'fields' => array('Loto.id','Loto.ketqua_id','Loto.loto','Loto.dau','Loto.dit','Loto.dacbiet','Loto.giai','Loto.date')
             ) );
 
-        $daus = $dits = $lotos;
+            $daus = $dits = $lotos;
 
-        for ($i=0; $i < 10; $i++) { 
-            if (!isset($loto_daus[$i])) $loto_daus[$i] = array();
-            if (!isset($loto_dits[$i])) $loto_dits[$i] = array();
-            foreach ($daus as $key_dau => $value_dau) {
-                if ($value_dau['Loto']['dau'] == $i) {
-                    $loto_daus[$i][] = $value_dau;
-                    unset($daus[$key_dau]);
+            for ($i=0; $i < 10; $i++) { 
+                if (!isset($loto_daus[$i])) $loto_daus[$i] = array();
+                if (!isset($loto_dits[$i])) $loto_dits[$i] = array();
+                foreach ($daus as $key_dau => $value_dau) {
+                    if ($value_dau['Loto']['dau'] == $i) {
+                        $loto_daus[$i][] = $value_dau;
+                        unset($daus[$key_dau]);
+                    }
+                }
+                foreach ($dits as $key_dit => $value_dit) {
+                    if ($value_dit['Loto']['dit'] == $i) {
+                        $loto_dits[$i][] = $value_dit;
+                        unset($dits[$key_dit]);
+                    }
                 }
             }
-            foreach ($dits as $key_dit => $value_dit) {
-                if ($value_dit['Loto']['dit'] == $i) {
-                    $loto_dits[$i][] = $value_dit;
-                    unset($dits[$key_dit]);
-                }
-            }
+            $check_string = array('dacbiet','nhat');
+            $id = $ketqua['Ketqua']['id'];
+            unset($ketqua['Ketqua']['id']);
+        } else {
+            $ketqua = $check_string = $lotos = $loto_daus = $loto_dits = array();
+            $id = '';
+            $check_string = array();
         }
-        $check_string = array('dacbiet','nhat');
-        $id = $ketqua['Ketqua']['id'];
-        unset($ketqua['Ketqua']['id']);
-
         $this->loadModel('Giaithuong');
         $giai_thuongs = $this->Giaithuong->find('all',array(
             'conditions' => array(
                 'Giaithuong.ketqua_id' => $id,
-                'Giaithuong.bang' => 1,
-                'Giaithuong.date' => $date
+                'Giaithuong.bang' => $this->Session->read('Session.bang'),
+                'Giaithuong.date' => $today
                 )
             ) );
-        $this->set(compact('ketqua','date','id','check_string','lotos','loto_daus','loto_dits','giai_thuongs'));
+        $bang = $this->Giaithuong->find('count',array(
+            'conditions' => array(
+                'Giaithuong.ketqua_id' => $id,
+                'Giaithuong.date' => $today,
+                'Giaithuong.bang IS NOT NULL'
+                ),
+            'group' => 'Giaithuong.bang'
+            ) );
+        $this->set('date',$today);
+        $this->set(compact('ketqua','id','check_string','lotos','loto_daus','loto_dits','giai_thuongs','bang'));
     }
 
 	public function update_today() 
@@ -153,89 +157,80 @@ class KetquasController extends AppController
 			$kq['dacbiet'] 	= NULL;
 		}
 		$kq['date'] = date("Y-m-d",strtotime($date));
-		$kt_kq	= $this->Ketqua->findByDate($kq['date']);
-		$return_loto = false;
-		if (empty($kt_kq)) 
-        {
-			$this->Ketqua->create();
-			$ketqua = $this->Ketqua->save($kq);
-		} 
-        else 
-        {
-			$check_up = $this->Ketqua->find('first',array(
-					'conditions' => array(
-						'Ketqua.date' => $kq['date'],
-						'Ketqua.nhat IS NOT NULL',
-						'Ketqua.nhi IS NOT NULL',
-						'Ketqua.ba IS NOT NULL',
-						'Ketqua.tu IS NOT NULL',
-						'Ketqua.nam IS NOT NULL',
-						'Ketqua.sau IS NOT NULL',
-						'Ketqua.bay IS NOT NULL',
-						'Ketqua.dacbiet IS NOT NULL'
-						)
-					));
-		}
-        if (empty($check_up)) 
-        {
-            if (!$this->Ketqua->exists($kt_kq['Ketqua']['id'])) 
+		$kt_kq	= $this->Ketqua->findByDate($kq['date']); // kiem tra da cap nhat chua
+
+        $Ketqua = $this->Ketqua->getDataSource();
+        $Loto = $this->Loto->getDataSource();
+        try {
+            $Ketqua->begin();
+            $Loto->begin();
+            if (empty($kt_kq)) 
             {
-                throw new NotFoundException(__('Invalid order'));
+                $this->Ketqua->create();
+                $ketqua = $this->Ketqua->save($kq);
+                $kt_kq['Ketqua']['id'] = $ketqua['Ketqua']['id'];
+            } 
+            else 
+            {
+                if ($this->Ketqua->exists($kt_kq['Ketqua']['id'])) {
+                    $this->Ketqua->id = $kt_kq['Ketqua']['id'];
+                    $this->Ketqua->save($kq);
+                } else {
+                    throw new Exception("Error Processing Request", 1);
+                } 
             }
-            $this->Ketqua->id = $kt_kq['Ketqua']['id'];
-            $ketqua = $this->Ketqua->save($kq);
-        } 
-        else 
-        {
-            $ketqua = true;
-        }
-        $lotos = array();
-        $i = 0;
-        /* nhat */
-        $lotos += $this->get_loto_string($kq['nhat'],$kt_kq['Ketqua']['id'],0,1,$kq['date'],$i);
-        $i++;
-        /* nhat */
-        /* nhi */
-        $nhi = $this->get_loto($kq['nhi'],$kt_kq['Ketqua']['id'],0,2,$kq['date'],$i);
-        $lotos += $nhi['loto'];
-        $i = $nhi['i'];
-        /* nhi */
-        /* ba */
-        $ba = $this->get_loto($kq['ba'],$kt_kq['Ketqua']['id'],0,3,$kq['date'],$i);
-        $lotos += $ba['loto'];
-        $i = $ba['i'];
-        /* ba */
-        /* tu */
-        $tu = $this->get_loto($kq['tu'],$kt_kq['Ketqua']['id'],0,4,$kq['date'],$i);
-        $lotos += $tu['loto'];
-        $i = $tu['i'];
-        /* tu */
-        /* nam */
-        $nam = $this->get_loto($kq['nam'],$kt_kq['Ketqua']['id'],0,5,$kq['date'],$i);
-        $lotos += $nam['loto'];
-        $i = $nam['i'];
-        /* nam */
-        /* sau */
-        $sau = $this->get_loto($kq['sau'],$kt_kq['Ketqua']['id'],0,6,$kq['date'],$i);
-        $lotos += $sau['loto'];
-        $i = $sau['i'];
-        /* sau */
-        /* bay */
-        $bay = $this->get_loto($kq['bay'],$kt_kq['Ketqua']['id'],0,7,$kq['date'],$i);
-        $lotos += $bay['loto'];
-        $i = $bay['i'];
-        /* bay */
-        $lotos += $this->get_loto_string($kq['dacbiet'],$kt_kq['Ketqua']['id'],1,8,$kq['date'],$i);
-        $delete = $this->Loto->deleteAll(array('Loto.date' => $kq['date']), false);
-        $return_loto = $this->Loto->saveAll($lotos);
-        if ($ketqua && $return_loto) 
-        {
+            $lotos = array();
+            $i = 0;
+            /* nhat */
+            $lotos += $this->get_loto_string($kq['nhat'],$kt_kq['Ketqua']['id'],0,1,$kq['date'],$i);
+            $i++;
+            /* nhat */
+            /* nhi */
+            $nhi = $this->get_loto($kq['nhi'],$kt_kq['Ketqua']['id'],0,2,$kq['date'],$i);
+            $lotos += $nhi['loto'];
+            $i = $nhi['i'];
+            /* nhi */
+            /* ba */
+            $ba = $this->get_loto($kq['ba'],$kt_kq['Ketqua']['id'],0,3,$kq['date'],$i);
+            $lotos += $ba['loto'];
+            $i = $ba['i'];
+            /* ba */
+            /* tu */
+            $tu = $this->get_loto($kq['tu'],$kt_kq['Ketqua']['id'],0,4,$kq['date'],$i);
+            $lotos += $tu['loto'];
+            $i = $tu['i'];
+            /* tu */
+            /* nam */
+            $nam = $this->get_loto($kq['nam'],$kt_kq['Ketqua']['id'],0,5,$kq['date'],$i);
+            $lotos += $nam['loto'];
+            $i = $nam['i'];
+            /* nam */
+            /* sau */
+            $sau = $this->get_loto($kq['sau'],$kt_kq['Ketqua']['id'],0,6,$kq['date'],$i);
+            $lotos += $sau['loto'];
+            $i = $sau['i'];
+            /* sau */
+            /* bay */
+            $bay = $this->get_loto($kq['bay'],$kt_kq['Ketqua']['id'],0,7,$kq['date'],$i);
+            $lotos += $bay['loto'];
+            $i = $bay['i'];
+            /* bay */
+            $lotos += $this->get_loto_string($kq['dacbiet'],$kt_kq['Ketqua']['id'],1,8,$kq['date'],$i);
+            $this->Loto->deleteAll(array('Loto.date' => $kq['date']), false);
+            $this->Loto->saveAll($lotos);
+
+            $Ketqua->commit();
+            $Loto->commit();
             return true;
         } 
-        else 
-        {
+        catch (Exception $e) 
+        {   
+            echo $e->getMessage(), "\n";
+            $Ketqua->rollback();
+            $Loto->rollback();
             return false;
         }
+		
 
 	}
 
@@ -508,6 +503,8 @@ class KetquasController extends AppController
                     'Loto.loto' => $data['loto'] 
                     )
                 ) );
+            $data['gia_diem'] = floatval(preg_replace('/[^\d.]/', '',  $data['gia_diem'] ));
+            $data['gia_trung'] = floatval(preg_replace('/[^\d.]/', '',  $data['gia_trung'] ));
             $giai_thuong['loto'] = $data['loto'];
             $giai_thuong['diem'] = $data['diem'];
             $giai_thuong['so_nhay'] = $so_nhay;
@@ -519,7 +516,7 @@ class KetquasController extends AppController
             $giai_thuong['gia_diem'] = $data['gia_diem'];
             $giai_thuong['gia_trung'] = $data['gia_trung'];
             $giai_thuong['ketqua_id'] = $data['ketqua_id'];
-            $giai_thuong['bang'] = 1;
+            $giai_thuong['bang'] = $data['bang'];
             $giai_thuong['so_du'] = $giai_thuong['tien_danh'] - $giai_thuong['tien_trung'];
             $this->Giaithuong->create();
             $ht_giai_thuong = $this->Giaithuong->save($giai_thuong);
@@ -527,7 +524,7 @@ class KetquasController extends AppController
             $giai_thuongs = $this->Giaithuong->find('all',array(
                 'conditions' => array(
                     'Giaithuong.ketqua_id' => $data['ketqua_id'],
-                    'Giaithuong.bang' => 1,
+                    'Giaithuong.bang' => $data['bang'],
                     'Giaithuong.date' => $data['date']
                     )
                 ) );
@@ -537,6 +534,39 @@ class KetquasController extends AppController
             $this->render('/Elements/giaithuong_loto');
 
         }
+    }
+
+    public function session() 
+    {
+        if ($this->request->is('Post')) 
+        {
+            $this->layout = false;
+            $this->autoRender = false;
+            $data = $this->request->data;
+            $this->Session->write('Session.date',$data['session']['date']);
+            return $this->redirect(
+                array('controller' => 'ketquas', 'action' => 'index')
+            );
+        }
+    }
+
+    public function nhapvao_de() 
+    {
+        if ($this->request->is('ajax')) 
+        {
+            $this->layout = false;
+            $this->autoRender = false;
+            $data = $this->request->data;
+            pr($data);
+        }
+    }
+
+    public function session_bang($i) 
+    {
+        $this->Session->write('Session.bang',(int)($i));
+        return $this->redirect(
+            array('controller' => 'ketquas', 'action' => 'index')
+        );
     }
 
 }
