@@ -70,7 +70,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				    'id' => 'session',
 				    'class' => 'navbar-form navbar-left',
 				    'inputDefaults' => array(
-				        'label' => false
+				        'label' => false,
+				        'div' => false
 				    )
 				));
 	      	?>
@@ -79,7 +80,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		      		echo $this->Form->input( 'date',array('class' => 'form-control',"id" => "datepicker","value" => $this->Session->read('Session.date') ) );
 		      	?>
 		      	<div class="input-group-btn">
-			      <button class="btn btn-default">
+			      <button class="btn btn-default" style="padding: 6.5px 12px;">
 			        <i class="glyphicon glyphicon-search"></i>
 			      </button>
 			    </div>

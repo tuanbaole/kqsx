@@ -16,7 +16,7 @@
 	</thead>
 	<tbody>
 		<?php $i=1;$diem=0;$tong_diem_trung=0;$tien_danh=0;$tien_trung=0;$so_du=0; ?>
-		<?php foreach ($giai_thuong_los as $key_giai_thuong => $value_giai_thuong): ?>
+		<?php foreach ($giai_thuong_des as $key_giai_thuong => $value_giai_thuong): ?>
 			<tr class="<?php echo ($value_giai_thuong['Giaithuong']['so_nhay'] == 0)? 'info' : 'danger'; ?>" >
 				<td class="text-center"><?php echo $i;$i++; ?></td>
 				<td class="text-center"><?php echo  $this->MyHtml->conver_number($value_giai_thuong['Giaithuong']['loto']); ?></td>

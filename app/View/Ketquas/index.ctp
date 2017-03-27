@@ -147,70 +147,70 @@
 					<div class="col-md-12">
 						<ul class="pagination" style="margin:0px 0px 5px 0px;">
 							<li>
-								<span style="line-height: 2.2;"><?php echo __('Lô'); ?></span>
+								<span style="line-height: 30px;"><?php echo __('Lô'); ?></span>
 							</li>
 							<li>
-							  	<span style="line-height: 2.2;" class="col-xs-2">
+							  	<span style="line-height: 30px;" class="col-xs-2">
 							  		<input class="form-control input-sm currentcy-input" type="text" name="" value="<?php echo number_format(21700); ?>" id="gia-diem" don-vi="<?php echo 21700; ?>"  step="any" >
 								  	
 								</span>
-							  </li>
-							  <li>
-								<span style="line-height: 2.2;"><?php echo __('Trúng') ?></span>
 							</li>
 							<li>
-							  	<span style="line-height: 2.2;" class="col-xs-2">
+								<span style="line-height: 30px;"><?php echo __('Trúng') ?></span>
+							</li>
+							<li>
+							  	<span style="line-height: 30px;" class="col-xs-2">
 								  	<input class="form-control input-sm currentcy-input" type="text" name="" value="<?php echo number_format(80000); ?>"  id="gia-trung" don-vi="<?php echo 80000; ?>" >
 								</span>
-							  </li>
-							  <li>
-								<span style="line-height: 2.2;"><?php echo __('Đề') ?></span>
 							</li>
 							<li>
-							  	<span style="line-height: 2.2;" class="col-xs-2">
+								<span style="line-height: 30px;"><?php echo __('Đề') ?></span>
+							</li>
+							<li>
+							  	<span style="line-height: 30px;" class="col-xs-2">
 							  		<input class="form-control input-sm" type="text" name="" value="<?php echo 80; ?>" id="gia-trung-de">
 								</span>
-							  </li>
+							</li>
+							<li>
+								<span style="line-height: 30px;"><?php echo __('Tỷ Giá') ?></span>
+							</li>
+							<li>
+							  	<span style="line-height: 30px;" class="col-xs-2">
+							  		<input class="form-control input-sm currentcy-input" type="text" name="" value="<?php echo number_format(1000); ?>" id="ty-gia">
+								</span>
+							 </li>
 						</ul>
 					</div>
-					<div class="col-md-12">
-						<ul class="pagination pagination-sm" style="margin:0px 0px 5px 0px;" id="pagination-bang" val="<?php echo $bang; ?>">
-						  <li><a href="#"><?php echo __('Tất Cả'); ?></a></li>
-						  <li id="them-bang"><a href="#"><i class="glyphicon glyphicon-plus"></i></a></li>
-						  <?php for ($i=1; $i <= $bang; $i++) : ?> 
-						  	<li class="don-giaithuong <?php echo ($i==$this->Session->read('Session.bang') )?'active':''; ?>" val="<?php echo $i; ?>">
-						  		<?php echo $this->Html->link($i, array('controller'=>'ketquas','action'=>'session_bang',$i), array('escape'=>false)); ?>
-						  	</li>
-						  <?php endfor ?>
-						</ul>
+					<div class="col-md-12" id="bang">
+						<?php echo $this->element('bang',array('bangs' => $bangs)); ?>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-6"><!-- col-md-6.1 -->
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Loto'); ?></span>
-				    <input id="loto" type="number" class="form-control" name="loto" placeholder="Loto" max="99" min="0">
+				    <input id="loto" type="number" class="form-control" name="loto" placeholder="Loto" max="99" min="0" <?php echo ($this->Session->read('Session.bang') === -1)?' disabled': ''; ?> >
 				</div>
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Diem'); ?></span>
-				    <input id="diem" type="number" class="form-control" name="diem" placeholder="Diem" step="0.1">
+				    <input id="diem" type="number" class="form-control" name="diem" placeholder="Diem" step="0.1" <?php echo ($this->Session->read('Session.bang') === -1)?' disabled': ''; ?> >
 				</div>
 				<div id="giaithuong-loto">
-					<?php echo $this->element('giaithuong_loto',array('giai_thuongs' => $giai_thuongs,'date'=>$date,'ket_qua_id' => $id)); ?>
+					<?php echo $this->element('giaithuong_loto',array('giai_thuong_los' => $giai_thuong_los,'date'=>$date,'ket_qua_id' => $id)); ?>
 				</div>
 			</div><!-- end col-md-6.1 -->
 
 			<div class="col-md-6"><!-- col-md-6.2 -->
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Đề'); ?></span>
-				    <input id="de" type="number" class="form-control" name="de" placeholder="Đề" max="99" min="0">
+				    <input id="de" type="number" class="form-control" name="de" placeholder="Đề" max="99" min="0" <?php echo ($this->Session->read('Session.bang') === -1)?' disabled': ''; ?> >
 				</div>
 				<div class="input-group">
 				    <span class="input-group-addon"><?php echo __('Tiền'); ?></span>
-				    <input id="tien_de" type="number" class="form-control" name="tien_de" placeholder="Tiền" step="0.1">
+				    <input id="tien_de" type="number" class="form-control" name="tien_de" placeholder="Tiền" step="0.1" <?php echo ($this->Session->read('Session.bang') === -1)?' disabled': ''; ?> >
 				</div>
 				<div id="giaithuong-de">
-					<?php //echo $this->element('giaithuong_de',array('giai_thuongs' => $giai_thuongs,'date'=>$date,'ket_qua_id' => $id)); ?>
+					<?php echo $this->element('giaithuong_de',array('giai_thuong_des' => $giai_thuong_des,'date'=>$date,'ket_qua_id' => $id)); ?>
 				</div>
 			</div><!-- end col-md-6.2 -->
 

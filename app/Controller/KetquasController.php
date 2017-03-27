@@ -20,7 +20,6 @@ class KetquasController extends AppController
     {
         $this->loadModel('Loto');
         $today = date("Y-m-d",strtotime($this->Session->read('Session.date') ) );
-        // $lastday = date("Y-m-d",strtotime( $today.' -1 day'));
         $ketqua = $this->Ketqua->find('first',array(
             'conditions' => array('Ketqua.date' => $today),
             'fields' => array('Ketqua.id','Ketqua.dacbiet','Ketqua.nhat','Ketqua.nhi','Ketqua.ba','Ketqua.tu','Ketqua.nam','Ketqua.sau','Ketqua.bay'),
@@ -62,23 +61,51 @@ class KetquasController extends AppController
             $check_string = array();
         }
         $this->loadModel('Giaithuong');
-        $giai_thuongs = $this->Giaithuong->find('all',array(
-            'conditions' => array(
+        $this->loadModel('Bang');
+
+        if ($this->Session->read('Session.bang') !== -1 ) {
+            $option_lo = array(
                 'Giaithuong.ketqua_id' => $id,
                 'Giaithuong.bang' => $this->Session->read('Session.bang'),
-                'Giaithuong.date' => $today
-                )
-            ) );
-        $bang = $this->Giaithuong->find('count',array(
-            'conditions' => array(
-                'Giaithuong.ketqua_id' => $id,
                 'Giaithuong.date' => $today,
-                'Giaithuong.bang IS NOT NULL'
+                'Giaithuong.trang_thai' => 1
+                );
+            $option_de = array(
+                'Giaithuong.ketqua_id' => $id,
+                'Giaithuong.bang' => $this->Session->read('Session.bang'),
+                'Giaithuong.date' => $today,
+                'Giaithuong.trang_thai' => 0
+                );
+        } else {
+            $option_lo = array(
+                'Giaithuong.ketqua_id' => $id,
+                'Giaithuong.bang IS NOT NULL',
+                'Giaithuong.date' => $today,
+                'Giaithuong.trang_thai' => 1
+                );
+             $option_de = array(
+                'Giaithuong.ketqua_id' => $id,
+                'Giaithuong.bang IS NOT NULL',
+                'Giaithuong.date' => $today,
+                'Giaithuong.trang_thai' => 0
+                );
+        }
+
+        $giai_thuong_los = $this->Giaithuong->find('all',array(
+            'conditions' => $option_lo
+            ) );
+        $giai_thuong_des = $this->Giaithuong->find('all',array(
+            'conditions' => $option_de
+            ) );
+        $bangs = $this->Bang->find('list',array(
+            'conditions' => array(
+                'Bang.ketqua_id' => $id,
+                'Bang.date' => $today,
                 ),
-            'group' => 'Giaithuong.bang'
+            'fields' => array('Bang.id','Bang.so_bang')
             ) );
         $this->set('date',$today);
-        $this->set(compact('ketqua','id','check_string','lotos','loto_daus','loto_dits','giai_thuongs','bang'));
+        $this->set(compact('ketqua','id','check_string','lotos','loto_daus','loto_dits','giai_thuong_los','giai_thuong_des','bangs'));
     }
 
 	public function update_today() 
@@ -521,15 +548,16 @@ class KetquasController extends AppController
             $this->Giaithuong->create();
             $ht_giai_thuong = $this->Giaithuong->save($giai_thuong);
             
-            $giai_thuongs = $this->Giaithuong->find('all',array(
+            $giai_thuong_los = $this->Giaithuong->find('all',array(
                 'conditions' => array(
                     'Giaithuong.ketqua_id' => $data['ketqua_id'],
                     'Giaithuong.bang' => $data['bang'],
-                    'Giaithuong.date' => $data['date']
+                    'Giaithuong.date' => $data['date'],
+                    'Giaithuong.trang_thai' => 1
                     )
                 ) );
             $this->set('date',$data['date']);
-            $this->set(compact('giai_thuongs'));
+            $this->set(compact('giai_thuong_los'));
             $this->set('ket_qua_id', $data['ketqua_id']); // chú dòng này nếu có lỗi
             $this->render('/Elements/giaithuong_loto');
 
@@ -557,7 +585,44 @@ class KetquasController extends AppController
             $this->layout = false;
             $this->autoRender = false;
             $data = $this->request->data;
-            pr($data);
+            $this->loadModel('Loto');
+            $this->loadModel('Giaithuong');
+            $so_nhay = $this->Loto->find('count',array(
+                'conditions' => array(
+                    'Loto.date' => $data['date'],
+                    'Loto.loto' => $data['de'],
+                    'Loto.dacbiet' => 1 
+                    )
+                ) );
+            $data['ty_gia'] = floatval(preg_replace('/[^\d.]/', '',  $data['ty_gia'] ));;
+            $giai_thuong['loto'] = $data['de'];
+            $giai_thuong['diem'] = $data['tien_de'];
+            $giai_thuong['so_nhay'] = $so_nhay;
+            $giai_thuong['date'] = $data['date'];
+            $giai_thuong['tien_danh'] = $data['tien_de'] * $data['ty_gia'];
+            $giai_thuong['tien_trung'] = $giai_thuong['tien_danh'] * $so_nhay * $data['gia_trung_de'];
+            $giai_thuong['trang_thai'] = 0;
+            $giai_thuong['gia_diem'] = $data['ty_gia'];
+            $giai_thuong['gia_trung'] = $data['gia_trung_de'];
+            $giai_thuong['ketqua_id'] = $data['ketqua_id'];
+            $giai_thuong['bang'] = $data['bang'];
+            $giai_thuong['so_du'] = $giai_thuong['tien_danh'] - $giai_thuong['tien_trung'];
+            $giai_thuong['tong_diem_trung'] = 1;
+            $this->Giaithuong->create();
+            $this->Giaithuong->save($giai_thuong);
+            $giai_thuong_des = $this->Giaithuong->find('all',array(
+                'conditions' => array(
+                    'Giaithuong.ketqua_id' => $data['ketqua_id'],
+                    'Giaithuong.bang' => $data['bang'],
+                    'Giaithuong.date' => $data['date'],
+                    'Giaithuong.trang_thai' => 0
+                    )
+                ) );
+            // pr($giai_thuong);
+            $this->set('date',$data['date']);
+            $this->set(compact('giai_thuong_des'));
+            $this->set('ket_qua_id', $data['ketqua_id']); // chú dòng này nếu có lỗi
+            $this->render('/Elements/giaithuong_de');
         }
     }
 
