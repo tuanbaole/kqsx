@@ -179,10 +179,13 @@
 							  		<input class="form-control input-sm currentcy-input" type="text" name="" value="<?php echo number_format(1000); ?>" id="ty-gia">
 								</span>
 							 </li>
+							 <li>
+							  	<?php echo $this->Html->link(__('Cập nhật kết quả'), array('controller'=>'lotos','action'=>'CapNhatKetQua'), array('escape'=>false,'style' => 'line-height: 30px;')); ?>
+							 </li>
 						</ul>
 					</div>
 					<div class="col-md-12" id="bang">
-						<?php echo $this->element('bang',array('bangs' => $bangs)); ?>
+						<?php echo $this->element('bang',array('bangs' => $bangs,'ketqua_id' => $id )); ?>
 					</div>
 				</div>
 			</div>

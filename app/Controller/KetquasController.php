@@ -18,6 +18,8 @@ class KetquasController extends AppController
 
     public function index() 
     {
+        // $this->Session->destroy();die();
+        if ( !$this->Session->check('Session.dueDate') ) return $this->redirect(  array('controller' => 'codes', 'action' => 'index') );
         $this->loadModel('Loto');
         $today = date("Y-m-d",strtotime($this->Session->read('Session.date') ) );
         $ketqua = $this->Ketqua->find('first',array(
@@ -65,26 +67,26 @@ class KetquasController extends AppController
 
         if ($this->Session->read('Session.bang') !== -1 ) {
             $option_lo = array(
-                'Giaithuong.ketqua_id' => $id,
+                // 'Giaithuong.ketqua_id' => $id,
                 'Giaithuong.bang' => $this->Session->read('Session.bang'),
                 'Giaithuong.date' => $today,
                 'Giaithuong.trang_thai' => 1
                 );
             $option_de = array(
-                'Giaithuong.ketqua_id' => $id,
+                // 'Giaithuong.ketqua_id' => $id,
                 'Giaithuong.bang' => $this->Session->read('Session.bang'),
                 'Giaithuong.date' => $today,
                 'Giaithuong.trang_thai' => 0
                 );
         } else {
             $option_lo = array(
-                'Giaithuong.ketqua_id' => $id,
+                // 'Giaithuong.ketqua_id' => $id,
                 'Giaithuong.bang IS NOT NULL',
                 'Giaithuong.date' => $today,
                 'Giaithuong.trang_thai' => 1
                 );
              $option_de = array(
-                'Giaithuong.ketqua_id' => $id,
+                // 'Giaithuong.ketqua_id' => $id,
                 'Giaithuong.bang IS NOT NULL',
                 'Giaithuong.date' => $today,
                 'Giaithuong.trang_thai' => 0
@@ -99,7 +101,7 @@ class KetquasController extends AppController
             ) );
         $bangs = $this->Bang->find('list',array(
             'conditions' => array(
-                'Bang.ketqua_id' => $id,
+                // 'Bang.ketqua_id' => $id,
                 'Bang.date' => $today,
                 ),
             'fields' => array('Bang.id','Bang.so_bang')
@@ -572,6 +574,7 @@ class KetquasController extends AppController
             $this->autoRender = false;
             $data = $this->request->data;
             $this->Session->write('Session.date',$data['session']['date']);
+            $this->Session->write('Session.bang',-1);
             return $this->redirect(
                 array('controller' => 'ketquas', 'action' => 'index')
             );

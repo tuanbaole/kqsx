@@ -15,36 +15,28 @@ class BangsController extends AppController {
  */
 	// public $components = array('Paginator');
 	
-	public function view()
+	public function view($ketqua_id = NULL)
 	{
 		$this->autoRender = false;
 		$this->layout = false;
-		if ($this->request->is('ajax')) 
+    	$paginator = $this->Bang->find('count',array(
+    		'conditions' => array(
+    			'Bang.ketqua_id' => $ketqua_id,
+    			'Bang.date' => $this->Session->read('Session.date')
+    			)
+    		) );
+    	$bang['ketqua_id'] = $ketqua_id;
+    	$bang['date'] = $this->Session->read('Session.date');
+    	$bang['so_bang'] = $paginator + 1;
+    	$this->Bang->create();
+        $bang = $this->Bang->save($bang);
+        if ($bang) 
         {
-        	$data = $this->request->data;
-        	$paginator = $this->Bang->find('count',array(
-        		'conditions' => array(
-        			'Bang.ketqua_id' => $data['ketqua_id'],
-        			'Bang.date' => $data['date']
-        			)
-        		) );
-        	$bang['ketqua_id'] = $data['ketqua_id'];
-        	$bang['date'] = $data['date'];
-        	$bang['so_bang'] = $paginator + 1;
-        	$this->Bang->create();
-            $bang = $this->Bang->save($bang);
-            
-            $bangs = $this->Bang->find('list',array(
-            'conditions' => array(
-                'Bang.ketqua_id' => $data['ketqua_id'],
-                'Bang.date' => $data['date'],
-                ),
-            'fields' => array('Bang.id','Bang.so_bang')
-            ) );
-        	$this->set(compact('bangs'));
-        	$this->render('/Elements/bang');
-
+            $this->Session->write('Session.bang',(int)($bang['Bang']['id']));
         }
+        return $this->redirect(
+            array('controller' => 'ketquas', 'action' => 'index')
+        );
 	}
 
 }
